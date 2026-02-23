@@ -8,26 +8,31 @@ from sklearn.model_selection import train_test_split
 data = np.loadtxt('Gaussian 2D Wide.csv', delimiter=',')
 [rows,cols] = np.shape(data)
 # seperate class 0 and class 1 columns
-half_col_len = len(cols)//2    
+half_col_len = cols//2    
 X_class0 = data[:,0:half_col_len]
-X_class1 = data[:,half_col_len:len(cols)]
-
-# TODO
-# after make class 0 and 1 data sepearte, how to combine together to form new data set?
-# x, x_test, y, y_test = train_test_split(xtrain,labels,test_size=0.2, stratify=labels) 
+X_class1 = data[:,half_col_len:cols]
+# label to class 0 and 1
+y_class0=np.full((X_class0.shape[0],), -1)
+y_class1=np.ones(X_class1.shape[0])
+# split and combine to a new data set
+X = np.vstack([X_class0, X_class1])
+# build corresponding label for each point
+y=np.concatenate([y_class0,y_class1])
 
 # 70% for training, 15% for validation, 15% for testing
-num_train = int(0.7*rows)
-num_test = int(0.15*rows)
-num_validation = int(0.15*rows)
-print(f"{X_class0} for num_validation")
+x_train, x_test, y_train, y_test = train_test_split(X,y,test_size=0.3, stratify=y)
 
-# TODO data split:
-sample_train = data[0:num_train,0:-1]
-label_train = data[0:num_train,-1]
+# num_train = int(0.7*X)
+# num_test = int(0.15*rows)
+# num_validation = int(0.15*rows)
+# print(f"{rows} for num_validation")
 
-sample_test = data[rows-num_test:, -1]
-label_test = data[rows-num_test:, -1]
+# # TODO data split:
+# sample_train = data[0:num_train,0:-1]
+# label_train = data[0:num_train,-1]
+
+# sample_test = data[rows-num_test:, -1]
+# label_test = data[rows-num_test:, -1]
 
 sample_validation = data[]
 print(f"{X_class0} for sample_validation")
@@ -72,14 +77,14 @@ validation_dataloader = DataLoader(validation_data, batch_size=batch_size, shuff
 test_dataloader = DataLoader(sample_test, batch_size=batch_size, shuffle=False)
 
 
-m_values = [1,20,50,100,200]
 # defined a Loss function and optimizer
+# TODO can't use CrossEntropyLoss because labeled as -1, 1
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
 
 er_test = []
 # for different epoch
-for epoch in m_values:
+for epoch in len(num_epochs):
     for i, data in enumerate(train_dataloader, 0):
         # TODO
         # do we need loop batch size data?
